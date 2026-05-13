@@ -1,0 +1,31 @@
+name: Shell Lint
+
+on:
+  workflow_call:
+    inputs:
+      paths:
+        description: "Space-separated paths or globs to check (default: find all .sh/.bash files)"
+        required: false
+        type: string
+      severity:
+        description: "Minimum severity: error, warning, info, style"
+        required: false
+        type: string
+        default: "warning"
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run ShellCheck
+        run: |
+          if [ -n "${{ inputs.paths }}" ]; then
+            shellcheck --severity=${{ inputs.severity }} ${{ inputs.paths }}
+          else
+            find . -type f \( -name '*.sh' -o -name '*.bash' \) -not -path './.git/*' \
+              -exec shellcheck --severity=${{ inputs.severity }} {} +
+          fi

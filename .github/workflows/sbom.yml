@@ -1,0 +1,32 @@
+name: Generate SBOM
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        description: "Container image to scan (e.g., ghcr.io/misfitdev/app:sha-abc123). Leave empty for source scan."
+        required: false
+        type: string
+      format:
+        description: "SBOM format: spdx-json or cyclonedx-json"
+        required: false
+        type: string
+        default: "spdx-json"
+
+jobs:
+  sbom:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        if: ${{ inputs.image == '' }}
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ inputs.image || '' }}
+          path: ${{ inputs.image == '' && '.' || '' }}
+          format: ${{ inputs.format }}
+          artifact-name: sbom
+          output-file: sbom.${{ inputs.format == 'cyclonedx-json' && 'cdx' || 'spdx' }}.json
