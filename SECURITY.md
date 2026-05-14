@@ -8,7 +8,7 @@ If you discover a security vulnerability in any misfitdev repository, please rep
 
 Instead, please use [GitHub Security Advisories](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability) to privately report the vulnerability in the affected repository.
 
-If the repository does not have private vulnerability reporting enabled, email **security@misfitdev.com** with:
+If the repository does not have private vulnerability reporting enabled, email **security[@]misfit[.]dev** with:
 
 - A description of the vulnerability
 - Steps to reproduce
