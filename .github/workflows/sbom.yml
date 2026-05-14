@@ -12,12 +12,17 @@ on:
         required: false
         type: string
         default: "spdx-json"
+      attach-to-release:
+        description: "Attach SBOM to the GitHub release for the current tag"
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   sbom:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
     steps:
       - uses: actions/checkout@v4
         if: ${{ inputs.image == '' }}
@@ -30,3 +35,9 @@ jobs:
           format: ${{ inputs.format }}
           artifact-name: sbom
           output-file: sbom.${{ inputs.format == 'cyclonedx-json' && 'cdx' || 'spdx' }}.json
+
+      - name: Attach SBOM to release
+        if: ${{ inputs.attach-to-release && github.ref_type == 'tag' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.ref_name }}" sbom.*.json --clobber
